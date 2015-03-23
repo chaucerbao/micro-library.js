@@ -1,7 +1,16 @@
 export default class EnhancedElement {
   constructor(element) {
-    this.element = element;
-    this.length = element ? element.length : null;
+    switch (Object.prototype.toString.call(element)) {
+      case '[object HTMLCollection]':
+      case '[object NodeList]':
+        this.element = element.length ? Array.prototype.slice.call(element) : null;
+        this.length = element.length;
+        break;
+      default:
+        this.element = element;
+        this.length = undefined;
+        break;
+    }
   }
 
   addClass(classes) {

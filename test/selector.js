@@ -24,27 +24,43 @@ System.import('selector').then(function(selector) {
 
       it('# returns an element through getElementById', function() {
         expect(select('#id-1').element).to.equal(document.getElementById('id-1'))
-        expect(select('#does-not-exist').element).to.equal(document.getElementById('does-not-exist'))
       })
-      it('. returns elements through getElementsByClassName', function() {
-        expect(select('.class-A').element).to.equal(document.getElementsByClassName('class-A'))
-        expect(select('.does-not-exist').element).to.equal(document.getElementsByClassName('does-not-exist'))
+      it('# returns null when not found', function() {
+        expect(select('#does-not-exist').element).to.be.null
       })
-      it('@ returns elements through getElementsByName', function() {
-        expect(select('@name-I').element).to.equal(document.getElementsByName('name-I'))
-        expect(select('@does-not-exist').element).to.equal(document.getElementsByName('does-not-exist'))
+      it('. returns an array of elements through getElementsByClassName', function() {
+        expect(select('.class-A').element).to.be.an.instanceof(Array)
+        expect(select('.class-A').element[1]).to.equal(document.getElementsByClassName('class-A')[1])
       })
-      it('= returns elements through getElementsByTagName', function() {
-        expect(select('=div').element).to.equal(document.getElementsByTagName('div'))
-        expect(select('=does-not-exist').element).to.equal(document.getElementsByTagName('does-not-exist'))
+      it('. returns null when not found', function() {
+        expect(select('.does-not-exist').element).to.be.null
+      })
+      it('@ returns an array of elements through getElementsByName', function() {
+        expect(select('@name-I').element).to.be.an.instanceof(Array)
+        expect(select('@name-I').element[1]).to.equal(document.getElementsByName('name-I')[1])
+      })
+      it('@ returns null when not found', function() {
+        expect(select('@does-not-exist').element).to.be.null
+      })
+      it('= returns an array of elements through getElementsByTagName', function() {
+        expect(select('=div').element).to.be.an.instanceof(Array)
+        expect(select('=div').element[1]).to.equal(document.getElementsByTagName('div')[1])
+      })
+      it('= returns null when not found', function() {
+        expect(select('=does-not-exist').element).to.be.null
       })
       it('? returns an element through querySelector', function() {
         expect(select('?.class-A').element).to.equal(document.querySelector('.class-A'))
-        expect(select('?.does-not-exist').element).to.equal(document.querySelector('.does-not-exist'))
       })
-      it('* returns elements through querySelectorAll', function() {
-        expect(select('*.class-A').element).to.be.deep.equal(document.querySelectorAll('.class-A'))
-        expect(select('*.does-not-exist').element).to.be.deep.equal(document.querySelectorAll('.does-not-exist'))
+      it('? returns null when not found', function() {
+        expect(select('?.does-not-exist').element).to.be.null
+      })
+      it('* returns an array of elements through querySelectorAll', function() {
+        expect(select('*.class-A').element).to.be.an.instanceof(Array)
+        expect(select('*.class-A').element[1]).to.equal(document.querySelectorAll('.class-A')[1])
+      })
+      it('* returns null when not found', function() {
+        expect(select('*.does-not-exist').element).to.be.null
       })
 
       it('returns elements scoped by a context', function() {
