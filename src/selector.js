@@ -1,3 +1,5 @@
+import EnhancedElement from './model/EnhancedElement';
+
 export function select(query, context = document) {
   var matches = {
       '#': 'getElementById',
@@ -9,5 +11,5 @@ export function select(query, context = document) {
     },
     regex = /[#.@=?*]/.exec(query)[0];
 
-  return (context[matches[regex]](query.split(regex)[1]));
+  return new EnhancedElement(context[matches[regex]](query.split(regex)[1]));
 }
