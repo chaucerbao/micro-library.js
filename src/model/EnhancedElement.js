@@ -21,6 +21,14 @@ export default class EnhancedElement {
     return this;
   }
 
+  removeClass(classes) {
+    this.each((element) => {
+      element.classList.remove(...classes.split(' '));
+    });
+
+    return this;
+  }
+
   each(callback) {
     let elements = this.length ? this.element : [this.element];
 
