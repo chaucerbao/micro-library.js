@@ -10,7 +10,7 @@ System.import('selector').then(function(selector) {
           <span class="class-A"></span>\
           <span class="class-A" name="name-I"></span>\
         </div>\
-      ';
+      '
     })
 
     after(function() {
@@ -22,52 +22,42 @@ System.import('selector').then(function(selector) {
     describe('#select()', function() {
       var select = selector.select
 
-      it('# returns an element through getElementById', function() {
-        expect(select('#id-1').element).to.equal(document.getElementById('id-1'))
-      })
-      it('# returns null when not found', function() {
-        expect(select('#does-not-exist').element).to.be.null
-      })
-      it('. returns an array of elements through getElementsByClassName', function() {
-        expect(select('.class-A').element).to.be.an.instanceof(Array)
-        expect(select('.class-A').element[1]).to.equal(document.getElementsByClassName('class-A')[1])
-      })
-      it('. returns null when not found', function() {
-        expect(select('.does-not-exist').element).to.be.null
-      })
-      it('@ returns an array of elements through getElementsByName', function() {
-        expect(select('@name-I').element).to.be.an.instanceof(Array)
-        expect(select('@name-I').element[1]).to.equal(document.getElementsByName('name-I')[1])
-      })
-      it('@ returns null when not found', function() {
-        expect(select('@does-not-exist').element).to.be.null
-      })
-      it('= returns an array of elements through getElementsByTagName', function() {
-        expect(select('=div').element).to.be.an.instanceof(Array)
-        expect(select('=div').element[1]).to.equal(document.getElementsByTagName('div')[1])
-      })
-      it('= returns null when not found', function() {
-        expect(select('=does-not-exist').element).to.be.null
-      })
-      it('? returns an element through querySelector', function() {
-        expect(select('?.class-A').element).to.equal(document.querySelector('.class-A'))
-      })
-      it('? returns null when not found', function() {
-        expect(select('?.does-not-exist').element).to.be.null
-      })
-      it('* returns an array of elements through querySelectorAll', function() {
-        expect(select('*.class-A').element).to.be.an.instanceof(Array)
-        expect(select('*.class-A').element[1]).to.equal(document.querySelectorAll('.class-A')[1])
-      })
-      it('* returns null when not found', function() {
-        expect(select('*.does-not-exist').element).to.be.null
+      it('returns the first element that matches the selector', function() {
+        expect(select('#id-2 .class-A?').elements[0]).to.equal(document.querySelector('#id-2 .class-A'))
+        expect(select('#id-2 .class-A?').length).to.equal(1)
+        expect(select('[name="name-I"]?').elements[0]).to.equal(document.querySelector('[name="name-I"]'))
+        expect(select('[name="name-I"]?').length).to.equal(1)
       })
 
-      it('returns elements scoped by a context', function() {
+      it('returns a collection of elements that match the selector', function() {
+        expect(select('#id-2 span').elements[0]).to.equal(document.querySelectorAll('#id-2 span')[0])
+        expect(select('#id-2 span').elements[1]).to.equal(document.querySelectorAll('#id-2 span')[1])
+        expect(select('#id-2 span').elements).to.have.length(2)
+        expect(select('#id-2 span').length).to.equal(2)
+
+        expect(select('.class-A').elements[0]).to.equal(document.querySelectorAll('.class-A')[0])
+        expect(select('.class-A').elements[1]).to.equal(document.querySelectorAll('.class-A')[1])
+        expect(select('.class-A').elements[2]).to.equal(document.querySelectorAll('.class-A')[2])
+        expect(select('.class-A').elements).to.have.length(3)
+        expect(select('.class-A').length).to.equal(3)
+      })
+
+      it('returns null if there are no matches', function() {
+        expect(select('.does-not-exist?').elements).to.be.null
+        expect(select('.does-not-exist?').length).to.equal(0)
+
+        expect(select('.does-not-exist').elements).to.be.null
+        expect(select('.does-not-exist').length).to.equal(0)
+      })
+
+      it('returns elements scoped by context', function() {
         var context = document.getElementById('id-2')
 
-        expect(select('.class-A').element).to.have.length(3)
-        expect(select('.class-A', context).element).to.have.length(2)
+        expect(select('.class-A').elements).to.have.length(3)
+        expect(select('.class-A').length).to.equal(3)
+
+        expect(select('.class-A', context).elements).to.have.length(2)
+        expect(select('.class-A', context).length).to.equal(2)
       })
     })
   })

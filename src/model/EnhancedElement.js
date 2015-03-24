@@ -1,22 +1,24 @@
 export default class EnhancedElement {
-  constructor(element) {
-    switch (Object.prototype.toString.call(element)) {
-      case '[object HTMLCollection]':
-      case '[object NodeList]':
-        this.element = element.length ? Array.prototype.slice.call(element) : null;
-        this.length = element.length;
-        break;
-      default:
-        this.element = element;
-        this.length = undefined;
-        break;
+  constructor(selection) {
+    if (selection instanceof NodeList || selection instanceof HTMLCollection) {
+      let elements = Array.prototype.slice.call(selection);
+
+      this.elements = elements.length ? elements : null;
+    } else {
+      this.elements = selection ? [selection] : null;
     }
   }
 
-  each(callback) {
-    let elements = this.length ? this.element : [this.element];
+  get length() {
+    let elements = this.elements;
 
-    for (let i = 0, length = elements.length; i < length; i++) {
+    return elements ? elements.length : 0;
+  }
+
+  each(callback) {
+    let elements = this.elements;
+
+    for (let i = 0, length = this.length; i < length; i++) {
       callback(elements[i]);
     }
 
@@ -25,7 +27,7 @@ export default class EnhancedElement {
 
   attr(key, value) {
     if (typeof value === 'undefined') {
-      return this.length ? this.element[0].getAttribute(key) : this.element.getAttribute(key);
+      return this.length ? this.elements[0].getAttribute(key) : null;
     } else {
       this.each((element) => {
         element.setAttribute(key, value);
@@ -37,7 +39,7 @@ export default class EnhancedElement {
 
   prop(key, value) {
     if (typeof value === 'undefined') {
-      return this.length ? this.element[0][key] : this.element[key];
+      return this.length ? this.elements[0][key] : null;
     } else {
       this.each((element) => {
         element[key] = value;
