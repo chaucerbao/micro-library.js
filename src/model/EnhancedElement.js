@@ -13,6 +13,16 @@ export default class EnhancedElement {
     }
   }
 
+  each(callback) {
+    let elements = this.length ? this.element : [this.element];
+
+    for (let i = 0, length = elements.length; i < length; i++) {
+      callback(elements[i]);
+    }
+
+    return this;
+  }
+
   addClass(classes) {
     this.each((element) => {
       element.classList.add(...classes.split(' '));
@@ -27,13 +37,5 @@ export default class EnhancedElement {
     });
 
     return this;
-  }
-
-  each(callback) {
-    let elements = this.length ? this.element : [this.element];
-
-    for (let i = 0, length = elements.length; i < length; i++) {
-      callback(elements[i]);
-    }
   }
 }
