@@ -5,8 +5,14 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
   describe('EnhancedElement', function() {
     beforeEach(function() {
       sandbox.innerHTML = '\
-        <input id="id-1" class="class-A class-Z" type="checkbox" checked />\
-        <input id="id-2" class="class-A class-Z" type="checkbox" />\
+        <div id="container-1" class="container">\
+          <input id="id-1" class="class-A class-Z" type="checkbox" checked />\
+          <input id="id-2" class="class-A class-Z" type="checkbox" />\
+        </div>\
+        <div class="container">\
+          Plain text\
+          <p>Paragraph <span>Nested Tag</span></p>\
+        </div>\
       '
     })
 
@@ -153,6 +159,34 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         var single = new EnhancedElement.default(document.getElementById('id-1'))
         expect(single).to.be.an.instanceof(EnhancedElement.default)
         expect(single.removeClass('does-not-matter')).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#empty()', function() {
+      it('removes all children from each element in a collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+
+        expect(collection.element[0].hasChildNodes()).to.be.true
+        expect(collection.element[1].hasChildNodes()).to.be.true
+        collection.empty()
+        expect(collection.element[0].hasChildNodes()).to.be.false
+        expect(collection.element[1].hasChildNodes()).to.be.false
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.empty()).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#remove()', function() {
+      it('removes each element in a collection from the DOM', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A'))
+
+        expect(document.getElementsByClassName('class-A')).to.have.length(2)
+        collection.remove()
+        expect(document.getElementsByClassName('class-A')).to.have.length(0)
       })
     })
   })

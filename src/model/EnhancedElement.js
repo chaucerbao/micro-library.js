@@ -62,4 +62,22 @@ export default class EnhancedElement {
 
     return this;
   }
+
+  empty() {
+    let child;
+
+    this.each((element) => {
+      while (child = element.lastChild) {
+        element.removeChild(child);
+      }
+    });
+
+    return this;
+  }
+
+  remove() {
+    this.each((element) => {
+      element.parentNode.removeChild(element);
+    });
+  }
 }
