@@ -65,6 +65,10 @@ export default class EnhancedElement {
     return this;
   }
 
+  hasClass(name) {
+    return this.length ? this.elements[0].classList.contains(name) : null;
+  }
+
   empty() {
     let child;
 

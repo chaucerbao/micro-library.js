@@ -7,7 +7,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
       sandbox.innerHTML = '\
         <div id="container-1" class="container">\
           <input id="id-1" class="class-A class-Z" type="checkbox" checked />\
-          <input id="id-2" class="class-A class-Z" type="checkbox" />\
+          <input id="id-2" class="class-A class-Y class-Z" type="checkbox" />\
         </div>\
         <div class="container">\
           Plain text\
@@ -133,6 +133,15 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
 
         expect(collection).to.be.an.instanceof(EnhancedElement.default)
         expect(collection.removeClass('does-not-matter')).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#hasClass()', function() {
+      it('determines the presence of a class on the first element of a collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A'))
+
+        expect(collection.hasClass('class-Z')).to.be.true
+        expect(collection.hasClass('class-Y')).to.be.false
       })
     })
 
