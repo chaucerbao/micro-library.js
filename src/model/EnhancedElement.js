@@ -23,6 +23,30 @@ export default class EnhancedElement {
     return this;
   }
 
+  attr(key, value) {
+    if (typeof value === 'undefined') {
+      return this.length ? this.element[0].getAttribute(key) : this.element.getAttribute(key);
+    } else {
+      this.each((element) => {
+        element.setAttribute(key, value);
+      });
+    }
+
+    return this;
+  }
+
+  prop(key, value) {
+    if (typeof value === 'undefined') {
+      return this.length ? this.element[0][key] : this.element[key];
+    } else {
+      this.each((element) => {
+        element[key] = value;
+      });
+    }
+
+    return this;
+  }
+
   addClass(classes) {
     this.each((element) => {
       element.classList.add(...classes.split(' '));
