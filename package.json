@@ -2,14 +2,15 @@
   "name": "micro-library.js",
   "version": "0.0.1",
   "description": "A set of JavaScript libraries for the minimalist",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/chaucerbao/micro-library.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chaucerbao/micro-library.js"
   },
   "devDependencies": {
     "babel": "*",
     "chai": "*",
     "es6-module-loader": "*",
-    "mocha": "*"
+    "mocha": "*",
+    "sinon": "*"
   }
 }
