@@ -25,6 +25,7 @@ System.import('ajax').then(function(ajax) {
         }).then(function(data) {
           expect(data.method).to.equal('GET')
           expect(data.url).to.equal('/some/url/?a=1&b=2')
+          expect(data.requestBody).to.not.exist
           expect(data.responseText).to.equal('Response Text')
           done()
         })
@@ -43,6 +44,7 @@ System.import('ajax').then(function(ajax) {
         }).then(function(data) {
           expect(data.method).to.equal('POST')
           expect(data.url).to.equal('/some/url/')
+          expect(data.requestBody).to.be.an.instanceOf(FormData)
           expect(data.responseText).to.equal('Response Text')
           done()
         })
@@ -61,6 +63,7 @@ System.import('ajax').then(function(ajax) {
         }).then(function(data) {
           expect(data.method).to.equal('PUT')
           expect(data.url).to.equal('/some/url/')
+          expect(data.requestBody).to.be.an.instanceOf(FormData)
           expect(data.responseText).to.equal('Response Text')
           done()
         })
@@ -79,6 +82,7 @@ System.import('ajax').then(function(ajax) {
         }).then(function(data) {
           expect(data.method).to.equal('DELETE')
           expect(data.url).to.equal('/some/url/?a=1&b=2')
+          expect(data.requestBody).to.not.exist
           expect(data.responseText).to.equal('Response Text')
           done()
         })
