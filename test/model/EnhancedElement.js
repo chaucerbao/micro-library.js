@@ -6,12 +6,15 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     beforeEach(function() {
       sandbox.innerHTML = '\
         <div id="container-1" class="container">\
+          <span>Tag</span>\
           <input id="id-1" class="class-A class-Z" type="checkbox" checked />\
           <input id="id-2" class="class-A class-Y class-Z" type="checkbox" />\
+          <span>Another Tag</span>\
         </div>\
         <div class="container">\
           Plain text\
           <p>Paragraph <span>Nested Tag</span></p>\
+          <span>More text</span>\
         </div>\
       '
     })
@@ -39,6 +42,46 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A'))
         expect(collection).to.be.an.instanceof(EnhancedElement.default)
         expect(collection.each(function(element) {})).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#select()', function() {
+      it('returns a new collection containing the first element that matches the selector within the existing collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+
+        expect(collection.select('span?').elements[0]).to.equal(document.getElementsByClassName('container')[0].querySelector('span'))
+        expect(collection.select('span?').length).to.equal(1)
+      })
+
+      it('returns a new collection containing all elements that match the selector within the existing collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+
+        expect(collection.select('span').elements[0]).to.equal(document.getElementsByClassName('container')[0].querySelectorAll('span')[0])
+        expect(collection.select('span').elements[1]).to.equal(document.getElementsByClassName('container')[0].querySelectorAll('span')[1])
+        expect(collection.select('span').elements[2]).to.equal(document.getElementsByClassName('container')[1].querySelectorAll('span')[0])
+        expect(collection.select('span').elements[3]).to.equal(document.getElementsByClassName('container')[1].querySelectorAll('span')[1])
+        expect(collection.select('span').elements).to.have.length(4)
+        expect(collection.select('span').length).to.equal(4)
+      })
+
+      it('returns a new, empty collection if there are no matches', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+
+        expect(collection.select('.does-not-exist?').elements).to.be.null
+        expect(collection.select('.does-not-exist?').length).to.equal(0)
+
+        expect(collection.select('.does-not-exist').elements).to.be.null
+        expect(collection.select('.does-not-exist').length).to.equal(0)
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.select('span?')).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.select('span')).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.select('.does-not-exist?')).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.select('.does-not-exist')).to.be.an.instanceof(EnhancedElement.default)
       })
     })
 

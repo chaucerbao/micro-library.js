@@ -1,6 +1,6 @@
 export default class EnhancedElement {
   constructor(selection) {
-    if (selection instanceof NodeList || selection instanceof HTMLCollection) {
+    if (selection && typeof selection.length !== 'undefined') {
       let elements = Array.prototype.slice.call(selection);
 
       this.elements = elements.length ? elements : null;
@@ -23,6 +23,29 @@ export default class EnhancedElement {
     }
 
     return this;
+  }
+
+  select(query) {
+    let justOne = /\?$/.test(query),
+      selector = justOne ? 'querySelector' : 'querySelectorAll',
+      criteria = query.split('?')[0],
+      matches = [];
+
+    this.each((element) => {
+      let match = element[selector](criteria);
+
+      if (match) {
+        if (justOne) {
+          if (!matches.length) {
+            matches = [match];
+          }
+        } else {
+          matches = matches.concat(Array.prototype.slice.call(match));
+        }
+      }
+    });
+
+    return new EnhancedElement(matches);
   }
 
   attr(key, value) {
