@@ -85,7 +85,15 @@ export default class EnhancedElement {
   }
 
   hasClass(name) {
-    return this.length ? this.elements[0].classList.contains(name) : null;
+    let hasClass = false;
+
+    this.each((element) => {
+      if (element.classList.contains(name)) {
+        hasClass = true;
+      }
+    });
+
+    return hasClass;
   }
 
   empty() {

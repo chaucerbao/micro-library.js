@@ -180,11 +180,11 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     })
 
     describe('#hasClass()', function() {
-      it('determines the presence of a class on the first element of a collection', function() {
+      it('determines the presence of a class on any of the elements in the collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A'))
 
-        expect(collection.hasClass('class-Z')).to.be.true
-        expect(collection.hasClass('class-Y')).to.be.false
+        expect(collection.hasClass('class-Y')).to.be.true
+        expect(collection.hasClass('class-X')).to.be.false
       })
     })
 
