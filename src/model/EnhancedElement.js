@@ -7,12 +7,8 @@ export default class EnhancedElement {
     } else {
       this.elements = selection ? [selection] : null;
     }
-  }
 
-  get length() {
-    let elements = this.elements;
-
-    return elements ? elements.length : 0;
+    this.length = this.elements ? this.elements.length : 0;
   }
 
   each(callback) {
