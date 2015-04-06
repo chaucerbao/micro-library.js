@@ -218,7 +218,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     })
 
     describe('#on()', function() {
-      it('attaches an event type to a handler on each element in a collection', function() {
+      it('attaches a handler to an event type on each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
           event = new MouseEvent('click'),
           runCount = 0
@@ -229,11 +229,12 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
 
         expect(runCount).to.equal(0)
         collection.elements[0].dispatchEvent(event)
+        expect(runCount).to.equal(1)
         collection.elements[1].dispatchEvent(event)
         expect(runCount).to.equal(2)
       })
 
-      it('delegates events from child nodes', function() {
+      it('attaches a delegated event handler on each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
           event = new MouseEvent('click', {
             bubbles: true
@@ -245,10 +246,12 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         })
 
         expect(runCount).to.equal(0)
-        sandbox.querySelector('p span').dispatchEvent(event)
-        expect(runCount).to.equal(0)
         sandbox.querySelector('p').dispatchEvent(event)
         expect(runCount).to.equal(1)
+        sandbox.querySelector('p span').dispatchEvent(event)
+        expect(runCount).to.equal(1)
+        sandbox.querySelector('p').dispatchEvent(event)
+        expect(runCount).to.equal(2)
       })
 
       it('is chainable', function() {
@@ -272,9 +275,11 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         expect(runCount).to.equal(0)
         collection.elements[0].dispatchEvent(event)
         expect(runCount).to.equal(1)
+        collection.elements[0].dispatchEvent(event)
+        expect(runCount).to.equal(2)
         collection.off('click', handler)
         collection.elements[0].dispatchEvent(event)
-        expect(runCount).to.equal(1)
+        expect(runCount).to.equal(2)
       })
 
       it('is chainable', function() {
@@ -285,7 +290,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     })
 
     describe('#once()', function() {
-      it('attaches an event type to a handler on each element in a collection that runs once (at most)', function() {
+      it('attaches a handler to an event type on each element in a collection that runs, at most, once', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
           event = new MouseEvent('click'),
           runCount = 0
@@ -301,7 +306,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         expect(runCount).to.equal(1)
       })
 
-      it('delegates events from child nodes that runs once (at most)', function() {
+      it('attaches a delegated event handler on each element in a collection that runs, at most, once', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
           event = new MouseEvent('click', {
             bubbles: true
@@ -346,20 +351,20 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
 
       it('accepts parameters', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          handler = function(event, a, b) {
+            runCount += a + b
+          },
           runCount = 0
 
-        collection.once('once', function(event, a, b) {
-          runCount += a + b
-        })
-
-        collection.on('all', function(event, a, b) {
-          runCount += a + b
-        })
+        collection.once('once', handler)
+        collection.on('all', handler)
 
         expect(runCount).to.equal(0)
         collection.trigger('once', 1, 2)
         expect(runCount).to.equal(3)
         collection.trigger('all', 2, 3)
+        expect(runCount).to.equal(13)
+        collection.trigger('once', 1, 2)
         expect(runCount).to.equal(13)
       })
 
