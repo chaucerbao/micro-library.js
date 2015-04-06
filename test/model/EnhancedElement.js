@@ -263,5 +263,36 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         expect(collection.on('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
       })
     })
+
+    describe('#off()', function() {
+      it('detaches an event handler from each element in a collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          item = document.getElementById('id-1'),
+          event = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+          handler = function(event) {
+            runCount++
+          },
+          runCount = 0
+
+        item.addEventListener('click', handler)
+
+        expect(runCount).to.equal(0)
+        item.dispatchEvent(event)
+        expect(runCount).to.equal(1)
+        collection.off('click', handler)
+        item.dispatchEvent(event)
+        expect(runCount).to.equal(1)
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.off('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
   })
 })

@@ -134,4 +134,12 @@ export default class EnhancedElement {
 
     return this;
   }
+
+  off(type, callback) {
+    this.each((element) => {
+      element.removeEventListener(type, callback);
+    });
+
+    return this;
+  }
 }
