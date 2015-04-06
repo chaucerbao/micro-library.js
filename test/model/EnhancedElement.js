@@ -220,7 +220,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     describe('#on()', function() {
       it('attaches an event type to a handler on each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
-          event = new MouseEvent("click", {
+          event = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
             view: window,
@@ -239,7 +239,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
 
       it('delegates events from child nodes', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
-          event = new MouseEvent("click", {
+          event = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
             view: window,
@@ -268,7 +268,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
       it('detaches an event handler from each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
           item = document.getElementById('id-1'),
-          event = new MouseEvent("click", {
+          event = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
             view: window,
@@ -292,6 +292,58 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
         expect(collection).to.be.an.instanceof(EnhancedElement.default)
         expect(collection.off('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#once()', function() {
+      it('attaches an event type to a handler on each element in a collection that runs once (at most)', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          event = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+          runCount = 0
+
+        collection.once('click', function() {
+          runCount++
+        })
+
+        expect(runCount).to.equal(0)
+        collection.elements[0].dispatchEvent(event)
+        collection.elements[1].dispatchEvent(event)
+        expect(runCount).to.equal(1)
+        collection.elements[0].dispatchEvent(event)
+        collection.elements[1].dispatchEvent(event)
+        expect(runCount).to.equal(1)
+      })
+
+      it('delegates events from child nodes that runs once (at most)', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
+          event = new MouseEvent('click', {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+          runCount = 0
+
+        collection.once('click', 'p', function() {
+          runCount++
+        })
+
+        expect(runCount).to.equal(0)
+        sandbox.querySelector('p span').dispatchEvent(event)
+        expect(runCount).to.equal(0)
+        sandbox.querySelector('p').dispatchEvent(event)
+        expect(runCount).to.equal(1)
+        sandbox.querySelector('p').dispatchEvent(event)
+        expect(runCount).to.equal(1)
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.once('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
       })
     })
   })

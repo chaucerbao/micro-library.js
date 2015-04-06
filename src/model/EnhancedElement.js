@@ -115,12 +115,12 @@ export default class EnhancedElement {
   }
 
   on(type, selector, callback) {
-    this.each((element) => {
-      if (typeof selector === 'function') {
-        callback = selector;
-        selector = null;
-      }
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
 
+    this.each((element) => {
       element.addEventListener(type, (event) => {
         if (selector) {
           if (event.target.matches(selector)) {
@@ -139,6 +139,26 @@ export default class EnhancedElement {
     this.each((element) => {
       element.removeEventListener(type, callback);
     });
+
+    return this;
+  }
+
+  once(type, selector, callback) {
+    if (typeof selector === 'function') {
+      callback = selector;
+      selector = null;
+    }
+
+    let runOnce = (event) => {
+      if (!runOnce.busy) {
+        runOnce.busy = true;
+        callback(event);
+        this.off(type, runOnce);
+      }
+    };
+    runOnce.busy = false;
+
+    this.on(type, selector, runOnce);
 
     return this;
   }
