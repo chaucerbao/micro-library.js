@@ -122,12 +122,14 @@ export default class EnhancedElement {
 
     this.each((element) => {
       element.addEventListener(type, (event) => {
+        let parameters = event.detail || [];
+
         if (selector) {
           if (event.target.matches(selector)) {
-            callback(event);
+            callback(event, ...parameters);
           }
         } else {
-          callback(event);
+          callback(event, ...parameters);
         }
       });
     });
@@ -152,13 +154,29 @@ export default class EnhancedElement {
     let runOnce = (event) => {
       if (!runOnce.busy) {
         runOnce.busy = true;
-        callback(event);
+
+        callback(event, ...(event.detail || []));
+
         this.off(type, runOnce);
       }
     };
     runOnce.busy = false;
 
     this.on(type, selector, runOnce);
+
+    return this;
+  }
+
+  trigger(type, ...parameters) {
+    this.each((element) => {
+      var event = new CustomEvent(type, {
+        bubbles: true,
+        cancelable: true,
+        detail: parameters
+      });
+
+      element.dispatchEvent(event);
+    });
 
     return this;
   }

@@ -220,11 +220,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     describe('#on()', function() {
       it('attaches an event type to a handler on each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
-          event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          }),
+          event = new MouseEvent('click'),
           runCount = 0
 
         collection.on('click', function() {
@@ -240,9 +236,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
       it('delegates events from child nodes', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
           event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
+            bubbles: true
           }),
           runCount = 0
 
@@ -267,24 +261,19 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     describe('#off()', function() {
       it('detaches an event handler from each element in a collection', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
-          item = document.getElementById('id-1'),
-          event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          }),
+          event = new MouseEvent('click'),
           handler = function(event) {
             runCount++
           },
           runCount = 0
 
-        item.addEventListener('click', handler)
+        collection.elements[0].addEventListener('click', handler)
 
         expect(runCount).to.equal(0)
-        item.dispatchEvent(event)
+        collection.elements[0].dispatchEvent(event)
         expect(runCount).to.equal(1)
         collection.off('click', handler)
-        item.dispatchEvent(event)
+        collection.elements[0].dispatchEvent(event)
         expect(runCount).to.equal(1)
       })
 
@@ -298,11 +287,7 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
     describe('#once()', function() {
       it('attaches an event type to a handler on each element in a collection that runs once (at most)', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
-          event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
-          }),
+          event = new MouseEvent('click'),
           runCount = 0
 
         collection.once('click', function() {
@@ -311,19 +296,15 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
 
         expect(runCount).to.equal(0)
         collection.elements[0].dispatchEvent(event)
-        collection.elements[1].dispatchEvent(event)
         expect(runCount).to.equal(1)
         collection.elements[0].dispatchEvent(event)
-        collection.elements[1].dispatchEvent(event)
         expect(runCount).to.equal(1)
       })
 
       it('delegates events from child nodes that runs once (at most)', function() {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
           event = new MouseEvent('click', {
-            bubbles: true,
-            cancelable: true,
-            view: window,
+            bubbles: true
           }),
           runCount = 0
 
@@ -344,6 +325,48 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
         expect(collection).to.be.an.instanceof(EnhancedElement.default)
         expect(collection.once('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
+
+    describe('#trigger()', function() {
+      it('dispatches an event on each element in a collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          incrementCount = function() {
+            runCount++;
+          },
+          runCount = 0
+
+        collection.elements[0].addEventListener('click', incrementCount)
+        collection.elements[1].addEventListener('click', incrementCount)
+
+        expect(runCount).to.equal(0)
+        collection.trigger('click')
+        expect(runCount).to.equal(2)
+      })
+
+      it('accepts parameters', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          runCount = 0
+
+        collection.once('once', function(event, a, b) {
+          runCount += a + b
+        })
+
+        collection.on('all', function(event, a, b) {
+          runCount += a + b
+        })
+
+        expect(runCount).to.equal(0)
+        collection.trigger('once', 1, 2)
+        expect(runCount).to.equal(3)
+        collection.trigger('all', 2, 3)
+        expect(runCount).to.equal(13)
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.trigger('an:event', function() {})).to.be.an.instanceof(EnhancedElement.default)
       })
     })
   })
