@@ -113,4 +113,25 @@ export default class EnhancedElement {
       element.parentNode.removeChild(element);
     });
   }
+
+  on(type, selector, callback) {
+    this.each((element) => {
+      if (typeof selector === 'function') {
+        callback = selector;
+        selector = null;
+      }
+
+      element.addEventListener(type, (event) => {
+        if (selector) {
+          if (event.target.matches(selector)) {
+            callback(event);
+          }
+        } else {
+          callback(event);
+        }
+      });
+    });
+
+    return this;
+  }
 }

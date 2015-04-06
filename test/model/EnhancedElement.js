@@ -216,5 +216,52 @@ System.import('model/EnhancedElement').then(function(EnhancedElement) {
         expect(document.getElementsByClassName('class-A')).to.have.length(0)
       })
     })
+
+    describe('#on()', function() {
+      it('attaches an event type to a handler on each element in a collection', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('class-A')),
+          event = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+          runCount = 0
+
+        collection.on('click', function() {
+          runCount++
+        })
+
+        expect(runCount).to.equal(0)
+        collection.elements[0].dispatchEvent(event)
+        collection.elements[1].dispatchEvent(event)
+        expect(runCount).to.equal(2)
+      })
+
+      it('delegates events from child nodes', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container')),
+          event = new MouseEvent("click", {
+            bubbles: true,
+            cancelable: true,
+            view: window,
+          }),
+          runCount = 0
+
+        collection.on('click', 'p', function() {
+          runCount++
+        })
+
+        expect(runCount).to.equal(0)
+        sandbox.querySelector('p span').dispatchEvent(event)
+        expect(runCount).to.equal(0)
+        sandbox.querySelector('p').dispatchEvent(event)
+        expect(runCount).to.equal(1)
+      })
+
+      it('is chainable', function() {
+        var collection = new EnhancedElement.default(document.getElementsByClassName('container'))
+        expect(collection).to.be.an.instanceof(EnhancedElement.default)
+        expect(collection.on('click', function() {})).to.be.an.instanceof(EnhancedElement.default)
+      })
+    })
   })
 })
