@@ -114,10 +114,10 @@ export default class EnhancedElement {
     });
   }
 
-  on(type, selector, callback) {
+  on(type, selector, callback, useCapture = false) {
     if (typeof selector === 'function') {
-      callback = selector;
       selector = null;
+      [, callback, useCapture] = arguments;
     }
 
     this.each((element) => {
@@ -145,24 +145,23 @@ export default class EnhancedElement {
     return this;
   }
 
-  once(type, selector, callback) {
+  once(type, selector, callback, useCapture = false) {
     if (typeof selector === 'function') {
-      callback = selector;
       selector = null;
+      [, callback, useCapture] = arguments;
     }
 
-    let runOnce = (event) => {
-      if (!runOnce.busy) {
-        runOnce.busy = true;
+    let callbackOnce = (event) => {
+      if (!callbackOnce.busy) {
+        callbackOnce.busy = true;
 
         callback(event, ...(event.detail || []));
 
-        this.off(type, runOnce);
+        this.off(type, callbackOnce);
       }
     };
-    runOnce.busy = false;
 
-    this.on(type, selector, runOnce);
+    this.on(type, selector, callbackOnce, useCapture);
 
     return this;
   }
