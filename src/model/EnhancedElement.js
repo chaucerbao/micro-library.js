@@ -116,22 +116,16 @@ export default class EnhancedElement {
 
   on(type, selector, callback, useCapture = false) {
     if (typeof selector === 'function') {
-      selector = null;
+      selector = '*';
       [, callback, useCapture] = arguments;
     }
 
     this.each((element) => {
       element.addEventListener(type, (event) => {
-        let parameters = event.detail || [];
-
-        if (selector) {
-          if (event.target.matches(selector)) {
-            callback(event, ...parameters);
-          }
-        } else {
-          callback(event, ...parameters);
+        if (event.target.matches(selector)) {
+          callback(event, ...(event.detail || []));
         }
-      });
+      }, useCapture);
     });
 
     return this;
@@ -147,7 +141,7 @@ export default class EnhancedElement {
 
   once(type, selector, callback, useCapture = false) {
     if (typeof selector === 'function') {
-      selector = null;
+      selector = '*';
       [, callback, useCapture] = arguments;
     }
 
