@@ -10,7 +10,7 @@
     "start": "./node_modules/.bin/browser-sync start --files \"src/**/*.js, test/**/*.js\" --no-open --no-inject-changes --no-online --server --startPath \"test/browser.html\""
   },
   "devDependencies": {
-    "babel": "*",
+    "babel-core": "*",
     "browser-sync": "*",
     "chai": "*",
     "es6-module-loader": "*",
